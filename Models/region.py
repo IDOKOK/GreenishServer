@@ -9,8 +9,8 @@ class RegionModel(db.Model):
     __tablename__ = 'region'
 
     id = db.Column(db.Integer, primary_key=True)  # primary key
-    name_of_region = db.Column(db.String(80), unique = True, nullable=False)
-    users = db.relationship("UserModel", back_populates="region", lazy="dynamic") #dynamic means populating the users only when you tell it to.
+    name_of_region = db.Column(db.String(100), unique = True, nullable=False)
+    users = db.relationship("UserModel", back_populates="region", lazy="dynamic", cascade="all, delete") #dynamic means populating the users only when you tell it to.
     # date_joined = db.Column(db.Date, default=datetime.utcnow)
 
     def __init__(self, name_of_region):
@@ -18,11 +18,10 @@ class RegionModel(db.Model):
 
 
     def serialize(self):
-        return {
-                "id": self.id,
-                "name_of_region": self.name_of_region
-                # "users": self.users
-                }
+         return {"id": self.id, 
+                 "name_of_region": self.name_of_region,
+                 "users": [user.json() for user in self.users.all()]}
+
 
     def save_to_db(self):
         db.session.add(self)  #A session is a collection of object that we have to write to the db
@@ -33,6 +32,9 @@ class RegionModel(db.Model):
     def find_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
 
+    @classmethod
+    def findAll(cls):
+        return cls.query.all()
 
     @classmethod
     def find_by_name(cls, name):

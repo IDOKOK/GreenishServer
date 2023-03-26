@@ -12,9 +12,10 @@ class UserModel(db.Model):
     username = db.Column(db.String(80), unique = True, nullable=False)
     email = db.Column(db.String(100), unique = True, nullable=False)
     password = db.Column(db.String(80), unique=True, nullable= False)
-    region_id = db.Column(db.Integer, db.ForeignKey("region.id"), unique=False, nullable=False)
-    region = db.relationship("RegionModel", back_populates="users")
+    region_id = db.Column(db.Integer, db.ForeignKey('region.id'), unique=False, nullable=False)
+    region = db.relationship("RegionModel", back_populates="users") #joins/association
     # date_joined = db.Column(db.Date, default=datetime.utcnow)
+    #
 
     def __init__(self, username, email, password, region_id):
        self.username = username
@@ -27,6 +28,10 @@ class UserModel(db.Model):
         db.session.add(self)  #A session is a collection of object that we have to write to the db
         db.session.commit()
 
+    @classmethod
+    def findAll(cls):
+        return cls.query.all()
+
 
     @classmethod
     def find_by_username(cls, username):
@@ -37,9 +42,9 @@ class UserModel(db.Model):
                 "id": self.id,
                 "username": self.username,
                 "email": self.email,
-                "region_id": self.region_id,
-                'region': self.region
+                "region": self.region
                 }
+
 
     def delete_from_db(self):
          db.session.delete(self)
