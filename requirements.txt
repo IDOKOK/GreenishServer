@@ -1,0 +1,7 @@
+flask
+flask-smorest
+python-dotenv
+flask-sqlalchemy
+mysql-connector-python
+sqlite3
+Flask-RESTful
